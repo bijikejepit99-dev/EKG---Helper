@@ -3,183 +3,625 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#14213D">
 <title>EKG Helper</title>
 <style>
   :root {
-    --paper: #fbf3f0;
-    --grid-fine: #f3d9d4;
-    --grid-bold: #e8b8b1;
-    --ink: #1c2b36;
-    --ink-soft: #55656f;
-    --action: #17405f;
-    --action-dark: #0f2d44;
-    --warn-bg: #fff4d6;
-    --warn-line: #d9a520;
-    --card: #ffffff;
-    --line: #e2d3cf;
-    --error: #a3271f;
+    --navy: #14213D;
+    --navy-soft: #1F3159;
+    --mint: #4ECDC4;
+    --mint-soft: #DDF5F3;
+    --bg: #F8FAF9;
+    --ink: #263238;
+    --ink-soft: #5B6A72;
+    --coral: #FF7A6B;
+    --coral-soft: #FFE9E6;
+    --card: #FFFFFF;
+    --line: #DCE5E3;
   }
   * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
   html, body { margin: 0; }
   body {
     font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
     color: var(--ink);
+    background: var(--bg);
     line-height: 1.55;
-    background-color: var(--paper);
-    background-image:
-      linear-gradient(var(--grid-bold) 1px, transparent 1px),
-      linear-gradient(90deg, var(--grid-bold) 1px, transparent 1px),
-      linear-gradient(var(--grid-fine) 1px, transparent 1px),
-      linear-gradient(90deg, var(--grid-fine) 1px, transparent 1px);
-    background-size: 50px 50px, 50px 50px, 10px 10px, 10px 10px;
     min-height: 100vh;
   }
-  main { max-width: 720px; margin: 0 auto; padding: 20px 16px 48px; }
+  main { max-width: 720px; margin: 0 auto; padding: 28px 18px 48px; }
+  button { font: inherit; cursor: pointer; }
+  button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visible, summary:focus-visible {
+    outline: 3px solid var(--mint);
+    outline-offset: 2px;
+  }
 
-  header { margin-bottom: 18px; }
-  h1 { font-size: 30px; margin: 0 0 2px; letter-spacing: -0.01em; }
-  header p { margin: 0; color: var(--ink-soft); }
-  .trace { display: block; width: 100%; max-width: 320px; height: 44px; margin-top: 8px; }
-  .trace path { fill: none; stroke: var(--ink); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+  /* ---------- Home ---------- */
+  .brand h1 {
+    margin: 0;
+    font-size: clamp(36px, 9vw, 52px);
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    font-weight: 800;
+    color: var(--navy);
+  }
+  .brand p { margin: 8px 0 0; font-size: 18px; color: var(--ink-soft); }
+
+  .code-field { margin: 28px 0 18px; }
+  .code-field label { display: block; font-weight: 600; margin-bottom: 6px; color: var(--navy); }
+  input[type="password"], textarea {
+    width: 100%;
+    font: inherit;
+    color: var(--ink);
+    background: #fff;
+    border: 1.5px solid var(--line);
+    border-radius: 10px;
+    padding: 12px 14px;
+  }
+  textarea { min-height: 96px; resize: vertical; }
+
+  .menu { display: grid; gap: 12px; }
+  .menu-btn {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    width: 100%;
+    text-align: left;
+    background: var(--navy);
+    color: #fff;
+    border: 0;
+    border-radius: 16px;
+    padding: 18px 18px;
+    min-height: 88px;
+    transition: background .15s;
+  }
+  .menu-btn:hover { background: var(--navy-soft); }
+  .menu-icon {
+    flex: none;
+    width: 52px; height: 52px;
+    border-radius: 14px;
+    background: var(--mint);
+    color: var(--navy);
+    display: grid; place-items: center;
+  }
+  .menu-icon svg { width: 28px; height: 28px; }
+  .menu-text strong { display: block; font-size: 21px; letter-spacing: -0.01em; }
+  .menu-text span { display: block; font-size: 15px; color: #B9E9E5; }
+
+  footer.ig { margin-top: 40px; text-align: center; }
+  footer.ig a {
+    display: inline-flex; align-items: center; gap: 8px;
+    color: var(--navy); text-decoration: none; font-weight: 600;
+    padding: 10px 14px; border-radius: 10px;
+  }
+  footer.ig a:hover { background: var(--mint-soft); }
+  footer.ig svg { width: 22px; height: 22px; }
+
+  /* ---------- Sub views ---------- */
+  .topbar { display: flex; align-items: center; gap: 10px; margin-bottom: 18px; }
+  .back {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 44px; height: 44px;
+    border: 1.5px solid var(--line);
+    background: #fff; color: var(--navy);
+    border-radius: 12px;
+  }
+  .back svg { width: 22px; height: 22px; }
+  .topbar h2 { margin: 0; font-size: 24px; letter-spacing: -0.02em; color: var(--navy); }
 
   .card {
     background: var(--card);
     border: 1px solid var(--line);
-    border-radius: 10px;
+    border-radius: 14px;
     padding: 16px;
     margin-bottom: 14px;
   }
-  h2 { font-size: 17px; margin: 0 0 10px; }
+  .btn {
+    border: 0; border-radius: 12px;
+    padding: 14px 20px;
+    font-weight: 700; font-size: 17px;
+    background: var(--mint); color: var(--navy);
+    min-height: 52px;
+  }
+  .btn:hover:not(:disabled) { background: #3DBDB4; }
+  .btn:disabled { opacity: .5; cursor: not-allowed; }
+  .btn.block { width: 100%; }
+  .btn.ghost { background: #fff; border: 1.5px solid var(--line); color: var(--navy); }
 
+  /* ---------- Beat Battle ---------- */
+  .stats {
+    display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 16px;
+    background: var(--navy); color: #fff;
+    border-radius: 14px; padding: 12px 16px; margin-bottom: 14px;
+    font-weight: 600;
+  }
+  .hearts { font-size: 22px; letter-spacing: 3px; }
+  .stats .num { font-variant-numeric: tabular-nums; }
+  .center { text-align: center; }
+  .big { font-size: 22px; font-weight: 800; color: var(--navy); margin: 0 0 6px; }
+  .muted { color: var(--ink-soft); margin: 0 0 14px; }
+  .question { font-size: 20px; font-weight: 700; color: var(--navy); margin: 0 0 12px; }
+  .options { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 10px; }
+  .opt {
+    position: relative;
+    background: #fff;
+    border: 2px solid var(--line);
+    border-radius: 12px;
+    padding: 8px;
+    text-align: left;
+  }
+  .opt:hover:not(:disabled) { border-color: var(--mint); }
+  .opt .letter {
+    position: absolute; top: 8px; left: 8px;
+    width: 28px; height: 28px; border-radius: 8px;
+    background: var(--navy); color: #fff; font-weight: 700;
+    display: grid; place-items: center; font-size: 14px; z-index: 1;
+  }
+  .opt svg { display: block; width: 100%; height: auto; }
+  .opt.correct { border-color: var(--mint); background: var(--mint-soft); }
+  .opt.wrong { border-color: var(--coral); background: var(--coral-soft); }
+  .opt:disabled { cursor: default; }
+  .feedback { margin-top: 12px; padding: 12px 14px; border-radius: 12px; font-weight: 600; }
+  .feedback.ok { background: var(--mint-soft); color: #0D5C56; }
+  .feedback.no { background: var(--coral-soft); color: #9A2F22; }
+  .feedback small { display: block; font-weight: 400; margin-top: 2px; color: var(--ink); }
+  .gameover { font-size: 34px; font-weight: 800; color: var(--coral); letter-spacing: -0.02em; margin: 6px 0 12px; }
+  .scoreline { font-size: 20px; font-weight: 700; color: var(--navy); margin: 2px 0; font-variant-numeric: tabular-nums; }
+
+  /* ---------- Journey ---------- */
+  .level { margin-bottom: 12px; border: 1px solid var(--line); border-radius: 14px; background: #fff; overflow: hidden; }
+  .level summary {
+    list-style: none; cursor: pointer;
+    display: flex; align-items: center; gap: 12px;
+    padding: 14px 16px; font-weight: 700; color: var(--navy);
+    min-height: 60px;
+  }
+  .level summary::-webkit-details-marker { display: none; }
+  .level .dot { flex: none; width: 14px; height: 14px; border-radius: 50%; }
+  .level .count { margin-left: auto; font-weight: 500; font-size: 14px; color: var(--ink-soft); }
+  .level .chev { flex: none; width: 18px; height: 18px; transition: transform .15s; color: var(--ink-soft); }
+  .level[open] .chev { transform: rotate(90deg); }
+  .lessons { list-style: none; margin: 0; padding: 0 8px 8px; }
+  .lesson {
+    display: flex; gap: 12px; align-items: center; width: 100%;
+    background: none; border: 0; text-align: left;
+    padding: 12px 10px; border-radius: 10px; color: var(--ink); min-height: 48px;
+  }
+  .lesson:hover { background: var(--bg); }
+  .lesson .n { flex: none; width: 28px; font-weight: 700; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+  .toast {
+    position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%);
+    background: var(--navy); color: #fff; padding: 12px 18px; border-radius: 12px;
+    font-weight: 600; z-index: 10; max-width: 90vw; text-align: center;
+  }
+
+  /* ---------- Bedah EKG ---------- */
   .picker {
     display: block;
-    border: 2px dashed var(--grid-bold);
-    border-radius: 8px;
-    padding: 22px 12px;
-    text-align: center;
-    cursor: pointer;
-    font-weight: 600;
-    color: var(--action);
-    background: #fffafa;
+    border: 2px dashed var(--mint);
+    background: var(--mint-soft);
+    border-radius: 12px;
+    padding: 24px 12px;
+    text-align: center; cursor: pointer;
+    font-weight: 700; color: var(--navy);
   }
-  .picker:focus-within, .picker:hover { border-color: var(--action); }
+  .picker:focus-within, .picker:hover { border-color: var(--navy); }
   .picker input { position: absolute; opacity: 0; width: 1px; height: 1px; }
-  .picker small { display: block; font-weight: 400; color: var(--ink-soft); margin-top: 4px; }
+  #preview { display: none; width: 100%; max-height: 360px; object-fit: contain; margin-top: 12px; border-radius: 8px; border: 1px solid var(--line); background: #fff; }
+  #context { margin-top: 12px; }
+  #status { color: var(--ink-soft); padding: 4px 2px 12px; }
+  #error { color: #9A2F22; background: var(--coral-soft); border-radius: 10px; padding: 10px 14px; font-weight: 600; margin-bottom: 12px; }
 
-  #preview { display: none; width: 100%; max-height: 360px; object-fit: contain; margin-top: 12px; border-radius: 6px; border: 1px solid var(--line); background: #fff; }
-
-  textarea, input[type="password"] {
-    width: 100%;
-    padding: 10px 12px;
-    font: inherit;
-    color: var(--ink);
-    border: 1px solid var(--line);
-    border-radius: 8px;
-  }
-  textarea { min-height: 92px; resize: vertical; }
-  textarea:focus, input[type="password"]:focus { outline: 2px solid var(--action); outline-offset: 1px; }
-  .hint { font-size: 14px; color: var(--ink-soft); margin: 0 0 8px; }
-
-  button {
-    font: inherit;
-    font-weight: 600;
-    border: 0;
-    border-radius: 8px;
-    padding: 14px 18px;
-    cursor: pointer;
-  }
-  button:focus-visible { outline: 3px solid #7fb2d6; outline-offset: 2px; }
-  #analyze { width: 100%; background: var(--action); color: #fff; font-size: 17px; }
-  #analyze:hover:not(:disabled) { background: var(--action-dark); }
-  #analyze:disabled { opacity: 0.5; cursor: not-allowed; }
-  #copy { background: #eef2f5; color: var(--ink); padding: 8px 12px; font-size: 14px; }
-
-  #status { display: none; color: var(--ink-soft); padding: 4px 2px 12px; }
-  #error { display: none; color: var(--error); font-weight: 600; padding: 4px 2px 12px; }
-
-  #result { display: none; }
-  .result-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-  .result-head h2 { margin: 0; }
-  #output { white-space: pre-wrap; word-wrap: break-word; }
-  #output strong { color: var(--action-dark); }
-
-  .disclaimer {
-    background: var(--warn-bg);
-    border-left: 4px solid var(--warn-line);
-    border-radius: 6px;
-    padding: 12px 14px;
-    font-size: 14px;
-  }
-
-  @media (prefers-reduced-motion: no-preference) {
-    .trace path { stroke-dasharray: 700; stroke-dashoffset: 700; animation: draw 1.6s ease-out forwards; }
-    @keyframes draw { to { stroke-dashoffset: 0; } }
-  }
+  .result-head { display: flex; justify-content: space-between; align-items: center; margin: 22px 0 12px; }
+  .result-head h3 { margin: 0; font-size: 20px; color: var(--navy); }
+  .step { background: #fff; border: 1px solid var(--line); border-left: 5px solid var(--mint); border-radius: 12px; padding: 14px 16px; }
+  .step .hd { display: flex; align-items: center; gap: 10px; font-weight: 700; color: var(--navy); font-size: 18px; }
+  .step .hd small { margin-left: auto; font-weight: 500; font-size: 13px; color: var(--ink-soft); }
+  .step .bd { margin-top: 6px; white-space: pre-wrap; word-wrap: break-word; }
+  .step .bd strong, .final .bd strong { color: inherit; }
+  .arrow { text-align: center; color: var(--mint); font-size: 22px; line-height: 1.3; font-weight: 800; }
+  .final { background: var(--navy); color: #fff; border-radius: 14px; padding: 16px 18px; }
+  .final h4 { margin: 0 0 8px; font-size: 18px; color: var(--mint); }
+  .final .item + .item { margin-top: 12px; padding-top: 12px; border-top: 1px solid #2E4270; }
+  .final .item b { display: block; color: #B9E9E5; }
+  .final .bd { white-space: pre-wrap; word-wrap: break-word; }
+  .intro { white-space: pre-wrap; margin-bottom: 12px; color: var(--ink-soft); }
 </style>
 </head>
 <body>
 <main>
-  <header>
-    <h1>EKG Helper</h1>
-    <p>Foto EKG masuk, bacaan terstruktur keluar. Jangan dihack, ntar disantet milzam</p>
-    <svg class="trace" viewBox="0 0 320 44" aria-hidden="true">
-      <path d="M0 26 H40 L46 22 L52 26 H70 L76 30 L82 4 L88 40 L94 26 H120 Q130 14 140 26 H190 L196 22 L202 26 H220 L226 30 L232 4 L238 40 L244 26 H270 Q280 14 290 26 H320"/>
-    </svg>
-  </header>
 
-  <section class="card">
-    <h2>Kode akses</h2>
-    <label for="code" class="hint">Masukkan kode akses yang Dokter tentukan.</label>
-    <input type="password" id="code" autocomplete="off">
-  </section>
-
-  <section class="card">
-    <h2>Foto EKG</h2>
-    <label class="picker" for="file">
-      Pilih foto EKG
-      <small>Ambil foto langsung atau pilih dari galeri</small>
-      <input type="file" id="file" accept="image/*">
-    </label>
-    <img id="preview" alt="Pratinjau foto EKG">
-  </section>
-
-  <section class="card">
-    <h2>Konteks klinis</h2>
-    <p class="hint">Usia, jenis kelamin, keluhan, TD, hasil lab (mis. troponin). Semakin lengkap, semakin tepat kesimpulannya. Jangan isi nama atau nomor RM pasien.</p>
-    <textarea id="context" placeholder="Contoh: laki-laki 60 tahun, nyeri dada 2 hari, TD 130/80, troponin normal"></textarea>
-  </section>
-
-  <button id="analyze" disabled>Baca EKG</button>
-  <div id="status" role="status"></div>
-  <div id="error" role="alert"></div>
-
-  <section class="card" id="result" style="margin-top:14px">
-    <div class="result-head">
-      <h2>Hasil bacaan</h2>
-      <button id="copy">Salin</button>
+  <!-- ================= HOME ================= -->
+  <section id="home">
+    <div class="brand">
+      <h1>EKG Helper</h1>
+      <p>Biar EKG nggak asing lagi</p>
     </div>
-    <div id="output"></div>
+
+    <div class="code-field">
+      <label for="code">Kode akses</label>
+      <input type="password" id="code" autocomplete="off">
+    </div>
+
+    <div class="menu">
+      <button class="menu-btn" data-go="battle">
+        <span class="menu-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-4.6-9.3-9.1C1.1 8.700 3 5 6.500 5c2 0 3.500 1.100 5.500 3.200C14 6.100 15.500 5 17.500 5 21 5 22.900 8.700 21.300 11.900 19 16.400 12 21 12 21z"/></svg>
+        </span>
+        <span class="menu-text"><strong>Beat Battle</strong><span>Seberapa jauh kamu bisa bertahan?</span></span>
+      </button>
+      <button class="menu-btn" data-go="journey">
+        <span class="menu-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V5m0 0h11l-2 4 2 4H4"/></svg>
+        </span>
+        <span class="menu-text"><strong>EKG Journey</strong><span>35 materi dalam 5 level</span></span>
+      </button>
+      <button class="menu-btn" data-go="bedah">
+        <span class="menu-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12h4l2-6 4 12 3-9 2 3h5"/></svg>
+        </span>
+        <span class="menu-text"><strong>Bedah EKG</strong><span>Upload foto, dibedah langkah demi langkah</span></span>
+      </button>
+    </div>
+
+    <footer class="ig">
+      <a href="https://instagram.com/milzamtaris" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.500" cy="6.500" r="1" fill="currentColor" stroke="none"/></svg>
+        @milzamtaris
+      </a>
+    </footer>
   </section>
 
-  <div class="disclaimer">
-    Alat bantu belajar dan second look, bukan pengganti interpretasi klinis. AI bisa melewatkan temuan halus dan salah mengukur interval. Selalu konfirmasi sendiri dan hindari mengunggah data yang mengidentifikasi pasien.
-  </div>
+  <!-- ================= BEAT BATTLE ================= -->
+  <section id="battle" hidden>
+    <div class="topbar">
+      <button class="back" data-go="home" aria-label="Kembali"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.500" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button>
+      <h2>Beat Battle</h2>
+    </div>
+
+    <div class="stats" id="stats">
+      <span class="hearts" id="hearts">❤️❤️❤️</span>
+      <span>Score: <span class="num" id="score">0</span></span>
+      <span>Best: <span class="num" id="best">0</span></span>
+      <span>🔥 Streak: <span class="num" id="streak">0</span></span>
+    </div>
+
+    <div class="card center" id="ready">
+      <p class="big">Kamu punya 3 nyawa</p>
+      <p class="muted">Jawab sebanyak mungkin sebelum nyawa habis.</p>
+      <button class="btn block" id="startBtn">Mulai</button>
+    </div>
+
+    <div class="card" id="play" hidden>
+      <p class="question" id="question"></p>
+      <div class="options" id="options"></div>
+      <div id="feedback" hidden></div>
+      <button class="btn block" id="nextBtn" style="margin-top:12px" hidden>Lanjut</button>
+    </div>
+
+    <div class="card center" id="over" hidden>
+      <div class="gameover">GAME OVER</div>
+      <p class="scoreline">Score: <span id="overScore">0</span></p>
+      <p class="scoreline">Best: <span id="overBest">0</span></p>
+      <p class="scoreline" style="margin-bottom:16px">🔥 Streak terbaik: <span id="overStreak">0</span></p>
+      <button class="btn block" id="againBtn">Main lagi</button>
+    </div>
+  </section>
+
+  <!-- ================= EKG JOURNEY ================= -->
+  <section id="journey" hidden>
+    <div class="topbar">
+      <button class="back" data-go="home" aria-label="Kembali"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.500" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button>
+      <h2>EKG Journey</h2>
+    </div>
+    <div id="levels"></div>
+  </section>
+
+  <!-- ================= BEDAH EKG ================= -->
+  <section id="bedah" hidden>
+    <div class="topbar">
+      <button class="back" data-go="home" aria-label="Kembali"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.500" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button>
+      <h2>Bedah EKG</h2>
+    </div>
+
+    <div class="card">
+      <label class="picker" for="file">
+        Pilih foto EKG
+        <input type="file" id="file" accept="image/*">
+      </label>
+      <img id="preview" alt="Pratinjau foto EKG">
+      <textarea id="context" placeholder="Konteks klinis (opsional): usia, jenis kelamin, keluhan, TD, troponin. Jangan isi nama atau nomor RM."></textarea>
+    </div>
+
+    <button class="btn block" id="analyze" disabled>Bedah EKG</button>
+    <div id="status" role="status" hidden style="margin-top:12px"></div>
+    <div id="error" role="alert" hidden style="margin-top:12px"></div>
+
+    <div id="result" hidden>
+      <div class="result-head">
+        <h3>Hasil bedah</h3>
+        <button class="btn ghost" id="copy" style="min-height:40px;padding:8px 14px;font-size:15px">Salin</button>
+      </div>
+      <div id="output"></div>
+    </div>
+  </section>
+
 </main>
+<div class="toast" id="toast" hidden></div>
 
 <script>
-const fileInput = document.getElementById('file');
-const preview = document.getElementById('preview');
-const analyzeBtn = document.getElementById('analyze');
-const statusEl = document.getElementById('status');
-const errorEl = document.getElementById('error');
-const resultEl = document.getElementById('result');
-const outputEl = document.getElementById('output');
-const contextEl = document.getElementById('context');
-const codeEl = document.getElementById('code');
-const copyBtn = document.getElementById('copy');
+const $ = (id) => document.getElementById(id);
+const VIEWS = ['home', 'battle', 'journey', 'bedah'];
 
-let imageBase64 = null;
-let rawText = '';
+function show(name) {
+  VIEWS.forEach(v => { $(v).hidden = (v !== name); });
+  window.scrollTo(0, 0);
+  if (name === 'battle') battleReset();
+}
+document.querySelectorAll('[data-go]').forEach(b => {
+  b.addEventListener('click', () => show(b.dataset.go));
+});
+
+let toastTimer;
+function toast(msg) {
+  const t = $('toast');
+  t.textContent = msg;
+  t.hidden = false;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { t.hidden = true; }, 2200);
+}
+
+function escapeHtml(s) {
+  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+function fmtBold(s) {
+  return escapeHtml(s).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+}
+
+/* =====================================================
+   BEAT BATTLE
+   Strip EKG digambar oleh kode (ilustrasi skematik).
+   Tambah jenis irama baru di TYPES di bawah.
+   ===================================================== */
+const TYPES = {
+  af:      { label: 'AF (atrial fibrillation)', why: 'Irama tidak teratur sama sekali (irregularly irregular) dan tidak ada gelombang P yang jelas.' },
+  flutter: { label: 'atrial flutter', why: 'Garis dasar bergerigi seperti gigi gergaji, QRS muncul teratur.' },
+  sinus:   { label: 'sinus rhythm normal', why: 'Teratur, tiap QRS didahului gelombang P, rate 60-100.' },
+  brady:   { label: 'sinus bradycardia', why: 'Teratur, ada gelombang P, rate di bawah 60.' },
+  tachy:   { label: 'sinus tachycardia', why: 'Teratur, ada gelombang P, rate di atas 100.' },
+  pvc:     { label: 'PVC', why: 'Ada QRS lebar yang muncul lebih awal tanpa gelombang P di depannya.' }
+};
+
+function gauss(x, mu, s, a) { const d = (x - mu) / s; return a * Math.exp(-d * d / 2); }
+
+function makeStrip(type, idx) {
+  const W = 300, H = 80, base = 48;
+  const beats = [];
+  let hasP = true, hasT = true, pOff = 16, tOff = 18;
+
+  if (type === 'sinus' || type === 'brady' || type === 'tachy' || type === 'pvc') {
+    const rr = type === 'brady' ? 86 : type === 'tachy' ? 30 : 52;
+    if (type === 'tachy') { pOff = 10; tOff = 11; }
+    let t = 20 + Math.random() * rr * 0.35;
+    const list = [];
+    while (t < W + 10) { list.push(t); t += rr; }
+    if (type === 'pvc') {
+      const k = 1 + Math.floor(Math.random() * Math.max(1, list.length - 3));
+      list.forEach((tt, i) => beats.push(i === k ? { t: tt - rr * 0.35, pvc: true } : { t: tt }));
+    } else {
+      list.forEach(tt => beats.push({ t: tt }));
+    }
+  } else if (type === 'af') {
+    hasP = false;
+    let t = 10 + Math.random() * 10;
+    while (t < W + 10) { beats.push({ t }); t += 24 + Math.random() * 40; }
+  } else if (type === 'flutter') {
+    hasP = false; hasT = false;
+    let t = 14 + Math.random() * 20;
+    while (t < W + 10) { beats.push({ t }); t += 60; }
+  }
+
+  const ph = [Math.random() * 6, Math.random() * 6, Math.random() * 6];
+  const sawShift = Math.random() * 15;
+
+  function y(x) {
+    let v = base;
+    if (type === 'af') {
+      v += 1.6 * Math.sin(x * 0.9 + ph[0]) + 1.2 * Math.sin(x * 1.7 + ph[1]) + 0.8 * Math.sin(x * 2.6 + ph[2]);
+    }
+    if (type === 'flutter') {
+      const f = ((x + sawShift) / 15) % 1;
+      v += 6 * f - 3;
+    }
+    for (const b of beats) {
+      if (b.pvc) {
+        v += gauss(x, b.t, 4, -30) + gauss(x, b.t + 9, 5, 14) + gauss(x, b.t + 25, 6, 11);
+      } else {
+        v += gauss(x, b.t - 3, 1, 3.500) + gauss(x, b.t, 1.100, -32) + gauss(x, b.t + 3, 1.100, 8);
+        if (hasT) v += gauss(x, b.t + tOff, 4.500, -7);
+        if (hasP) v += gauss(x, b.t - pOff, 3, -5);
+      }
+    }
+    return Math.max(4, Math.min(H - 4, v));
+  }
+
+  let d = '';
+  for (let x = 0; x <= W; x += 0.5) {
+    d += (x === 0 ? 'M' : 'L') + x.toFixed(1) + ',' + y(x).toFixed(1) + ' ';
+  }
+  const gid = 'grid' + idx;
+  return '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="Strip EKG">' +
+    '<defs><pattern id="' + gid + 's" width="5" height="5" patternUnits="userSpaceOnUse"><path d="M5 0H0V5" fill="none" stroke="#DCEDEB" stroke-width="0.4"/></pattern>' +
+    '<pattern id="' + gid + '" width="25" height="25" patternUnits="userSpaceOnUse"><rect width="25" height="25" fill="url(#' + gid + 's)"/><path d="M25 0H0V25" fill="none" stroke="#B9DCD8" stroke-width="0.6"/></pattern></defs>' +
+    '<rect width="' + W + '" height="' + H + '" fill="url(#' + gid + ')"/>' +
+    '<path d="' + d + '" fill="none" stroke="#14213D" stroke-width="1.300" stroke-linejoin="round" stroke-linecap="round"/></svg>';
+}
+
+const LS_KEY = 'ekghelper_best';
+const B = { lives: 3, score: 0, streak: 0, maxStreak: 0, best: 0, answered: false, q: null };
+try { B.best = parseInt(localStorage.getItem(LS_KEY) || '0', 10) || 0; } catch (e) {}
+
+const nf = (n) => n.toLocaleString('id-ID');
+
+function renderStats() {
+  $('hearts').textContent = '❤️'.repeat(B.lives) + '🖤'.repeat(3 - B.lives);
+  $('score').textContent = nf(B.score);
+  $('best').textContent = nf(B.best);
+  $('streak').textContent = B.streak;
+}
+
+function battleReset() {
+  B.lives = 3; B.score = 0; B.streak = 0; B.maxStreak = 0; B.answered = false;
+  $('ready').hidden = false;
+  $('play').hidden = true;
+  $('over').hidden = true;
+  renderStats();
+}
+
+function nextQuestion() {
+  const keys = Object.keys(TYPES);
+  const target = keys[Math.floor(Math.random() * keys.length)];
+  const others = keys.filter(k => k !== target).sort(() => Math.random() - 0.5).slice(0, 3);
+  const opts = [target, ...others].sort(() => Math.random() - 0.5);
+  B.q = { target, opts };
+  B.answered = false;
+
+  $('question').textContent = 'Manakah yang menunjukkan ' + TYPES[target].label + '?';
+  const box = $('options');
+  box.innerHTML = '';
+  opts.forEach((type, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'opt';
+    btn.innerHTML = '<span class="letter">' + 'ABCD'[i] + '</span>' + makeStrip(type, i);
+    btn.setAttribute('aria-label', 'Pilihan ' + 'ABCD'[i]);
+    btn.addEventListener('click', () => answer(i, btn));
+    box.appendChild(btn);
+  });
+  $('feedback').hidden = true;
+  $('nextBtn').hidden = true;
+}
+
+function answer(i, btn) {
+  if (B.answered) return;
+  B.answered = true;
+  const { target, opts } = B.q;
+  const correct = opts[i] === target;
+  const all = document.querySelectorAll('#options .opt');
+  all.forEach(b => { b.disabled = true; });
+  all[opts.indexOf(target)].classList.add('correct');
+
+  const fb = $('feedback');
+  fb.hidden = false;
+
+  if (correct) {
+    B.score += 100 + Math.min(B.streak, 10) * 10;
+    B.streak += 1;
+    B.maxStreak = Math.max(B.maxStreak, B.streak);
+    fb.className = 'feedback ok';
+    fb.innerHTML = '✅ Nice!<small>' + escapeHtml(TYPES[target].why) + '</small>';
+  } else {
+    btn.classList.add('wrong');
+    B.lives -= 1;
+    B.streak = 0;
+    fb.className = 'feedback no';
+    fb.innerHTML = 'Belum tepat.<small>' + escapeHtml(TYPES[target].why) + '</small>';
+  }
+  if (B.score > B.best) {
+    B.best = B.score;
+    try { localStorage.setItem(LS_KEY, String(B.best)); } catch (e) {}
+  }
+  renderStats();
+
+  if (B.lives <= 0) {
+    $('nextBtn').textContent = 'Lihat hasil';
+  } else {
+    $('nextBtn').textContent = 'Lanjut';
+  }
+  $('nextBtn').hidden = false;
+  $('nextBtn').focus();
+}
+
+$('startBtn').addEventListener('click', () => {
+  $('ready').hidden = true;
+  $('play').hidden = false;
+  nextQuestion();
+});
+$('nextBtn').addEventListener('click', () => {
+  if (B.lives <= 0) {
+    $('play').hidden = true;
+    $('over').hidden = false;
+    $('overScore').textContent = nf(B.score);
+    $('overBest').textContent = nf(B.best);
+    $('overStreak').textContent = B.maxStreak;
+  } else {
+    nextQuestion();
+  }
+});
+$('againBtn').addEventListener('click', () => {
+  battleReset();
+  $('ready').hidden = true;
+  $('play').hidden = false;
+  nextQuestion();
+});
+
+/* =====================================================
+   EKG JOURNEY
+   Isi materi nanti, sekarang baru daftar judul.
+   ===================================================== */
+const LEVELS = [
+  { name: 'Level 1: Kenalan Dulu', color: '#2E9E6B', open: true, lessons: [
+    'EKG itu sebenarnya apa?', 'Kenalan dengan 12 lead', 'Gelombang P, QRS, dan T',
+    'Kotak kecil, kotak besar', 'Rate: jantung lagi ngebut atau santai?', 'Regular atau irregular?' ] },
+  { name: 'Level 2: Mulai Bisa Baca', color: '#3B6FD4', lessons: [
+    'Sinus rhythm', 'Sinus bradycardia', 'Sinus tachycardia', 'Axis: jantung mengarah ke mana?',
+    'PR interval', 'QRS: sempit atau lebar?', 'QT interval' ] },
+  { name: 'Level 3: Rhythm & Conduction', color: '#7B5CC7', lessons: [
+    'Atrial fibrillation', 'Atrial flutter', 'SVT', 'PAC & PVC', 'AV block derajat I',
+    'Mobitz I', 'Mobitz II', 'Complete heart block' ] },
+  { name: 'Level 4: ST & Iskemia', color: '#E8892B', lessons: [
+    'ST elevation & depression', 'STEMI anterior', 'Inferior', 'Lateral', 'Posterior',
+    'Right ventricular infarction' ] },
+  { name: 'Level 5: EKG yang "Lho, Ini Apa?"', color: '#D9483B', lessons: [
+    "Wellens' syndrome", 'De Winter pattern', 'S1Q3T3', 'Hyperkalemia', 'Pericarditis',
+    'Brugada pattern', 'WPW', 'RBBB vs LBBB' ] }
+];
+
+(function renderLevels() {
+  let n = 0;
+  const root = $('levels');
+  LEVELS.forEach(lv => {
+    const det = document.createElement('details');
+    det.className = 'level';
+    if (lv.open) det.open = true;
+    const sum = document.createElement('summary');
+    sum.innerHTML = '<span class="dot" style="background:' + lv.color + '"></span>' +
+      '<span>' + escapeHtml(lv.name) + '</span>' +
+      '<span class="count">' + lv.lessons.length + ' materi</span>' +
+      '<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.500" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg>';
+    det.appendChild(sum);
+    const ul = document.createElement('ul');
+    ul.className = 'lessons';
+    lv.lessons.forEach(title => {
+      n += 1;
+      const li = document.createElement('li');
+      const b = document.createElement('button');
+      b.className = 'lesson';
+      b.innerHTML = '<span class="n">' + String(n).padStart(2, '0') + '</span><span>' + escapeHtml(title) + '</span>';
+      b.addEventListener('click', () => toast('Materi ini segera hadir'));
+      li.appendChild(b);
+      ul.appendChild(li);
+    });
+    det.appendChild(ul);
+    root.appendChild(det);
+  });
+})();
+
+/* =====================================================
+   BEDAH EKG
+   ===================================================== */
+const fileInput = $('file'), preview = $('preview'), analyzeBtn = $('analyze');
+const statusEl = $('status'), errorEl = $('error'), resultEl = $('result'), outputEl = $('output');
+let imageBase64 = null, rawText = '';
 
 function resizeImage(file, maxSide) {
   return new Promise((resolve, reject) => {
@@ -187,30 +629,21 @@ function resizeImage(file, maxSide) {
     const img = new Image();
     img.onload = () => {
       const scale = Math.min(1, maxSide / Math.max(img.width, img.height));
-      const w = Math.round(img.width * scale);
-      const h = Math.round(img.height * scale);
+      const w = Math.round(img.width * scale), h = Math.round(img.height * scale);
       const canvas = document.createElement('canvas');
-      canvas.width = w;
-      canvas.height = h;
+      canvas.width = w; canvas.height = h;
       canvas.getContext('2d').drawImage(img, 0, 0, w, h);
       URL.revokeObjectURL(url);
       resolve(canvas.toDataURL('image/jpeg', 0.85));
     };
-    img.onerror = () => {
-      URL.revokeObjectURL(url);
-      reject(new Error('Foto tidak bisa dibuka. Coba pilih file lain.'));
-    };
+    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('Foto tidak bisa dibuka. Coba pilih file lain.')); };
     img.src = url;
   });
 }
 
 function showError(msg) {
   errorEl.textContent = msg;
-  errorEl.style.display = msg ? 'block' : 'none';
-}
-
-function escapeHtml(s) {
-  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  errorEl.hidden = !msg;
 }
 
 fileInput.addEventListener('change', async (e) => {
@@ -231,13 +664,77 @@ fileInput.addEventListener('change', async (e) => {
   }
 });
 
+function iconFor(title) {
+  const t = title.toLowerCase();
+  if (/irama|rhythm/.test(t)) return '❤️';
+  if (/rate|laju|frek/.test(t)) return '⏱️';
+  if (/axis|aksis/.test(t)) return '🧭';
+  if (/^p\b|p wave|gelombang p/.test(t)) return '〰️';
+  if (/pr/.test(t)) return '📏';
+  if (/qrs/.test(t)) return '〰️';
+  if (/st|t wave|iskemi|koroner/.test(t)) return '📈';
+  return '🔎';
+}
+
+function parseSteps(text) {
+  const lines = text.replace(/\r/g, '').split('\n');
+  const steps = [], intro = [];
+  let cur = null;
+  for (const ln of lines) {
+    const m = ln.match(/^\s*(?:\*\*)?(\d{1,2})[.)]\s*(.*)$/);
+    if (m) { cur = { raw: m[2] }; steps.push(cur); }
+    else if (cur) { cur.raw += '\n' + ln; }
+    else if (ln.trim()) { intro.push(ln); }
+  }
+  steps.forEach(s => {
+    const r = s.raw.trim();
+    const m = r.match(/^\**\s*([^:\n]{1,40}?)\s*\**\s*:\s*\**\s*([\s\S]*)$/);
+    if (m) { s.title = m[1].replace(/\*\*/g, '').trim(); s.body = m[2].trim(); }
+    else {
+      const parts = r.split('\n');
+      s.title = parts[0].replace(/\*\*/g, '').slice(0, 40);
+      s.body = parts.slice(1).join('\n').trim();
+    }
+  });
+  return { intro: intro.join('\n'), steps };
+}
+
+function renderResult(text) {
+  const { intro, steps } = parseSteps(text);
+  const isFinal = (s) => /kesan|diagnosis|kesimpulan/i.test(s.title);
+  const mid = steps.filter(s => !isFinal(s));
+  const fin = steps.filter(isFinal);
+  let html = '';
+
+  if (!steps.length) {
+    return '<div class="step"><div class="bd">' + fmtBold(text) + '</div></div>';
+  }
+  if (intro) html += '<div class="intro">' + fmtBold(intro) + '</div>';
+
+  mid.forEach((s, i) => {
+    html += '<div class="step"><div class="hd"><span>' + iconFor(s.title) + '</span><span>' +
+      escapeHtml(s.title) + '</span><small>Langkah ' + (i + 1) + '</small></div>' +
+      '<div class="bd">' + fmtBold(s.body) + '</div></div>' +
+      '<div class="arrow" aria-hidden="true">↓</div>';
+  });
+
+  if (fin.length) {
+    html += '<div class="final"><h4>Kesimpulan</h4>' +
+      fin.map(s => '<div class="item"><b>' + escapeHtml(s.title) + '</b><div class="bd">' + fmtBold(s.body) + '</div></div>').join('') +
+      '</div>';
+  } else {
+    html = html.replace(/<div class="arrow" aria-hidden="true">↓<\/div>$/, '');
+  }
+  return html;
+}
+
 analyzeBtn.addEventListener('click', async () => {
   if (!imageBase64) return;
   showError('');
-  resultEl.style.display = 'none';
+  resultEl.hidden = true;
   analyzeBtn.disabled = true;
-  statusEl.textContent = 'Membaca EKG... biasanya 10-30 detik.';
-  statusEl.style.display = 'block';
+  statusEl.textContent = 'Membedah EKG... biasanya 10-30 detik.';
+  statusEl.hidden = false;
 
   try {
     const response = await fetch('/.netlify/functions/analyze', {
@@ -245,8 +742,8 @@ analyzeBtn.addEventListener('click', async () => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         image: imageBase64,
-        context: contextEl.value.trim(),
-        code: codeEl.value
+        context: $('context').value.trim(),
+        code: $('code').value
       })
     });
     let data = {};
@@ -256,26 +753,29 @@ analyzeBtn.addEventListener('click', async () => {
     }
     rawText = data.text || '';
     if (!rawText) throw new Error('Tidak ada hasil. Coba lagi dengan foto yang lebih jelas.');
-    outputEl.innerHTML = escapeHtml(rawText).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
-    resultEl.style.display = 'block';
+    outputEl.innerHTML = renderResult(rawText);
+    resultEl.hidden = false;
     resultEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
   } catch (err) {
     showError(err.message || 'Terjadi kesalahan. Periksa koneksi lalu coba lagi.');
   } finally {
-    statusEl.style.display = 'none';
+    statusEl.hidden = true;
     analyzeBtn.disabled = false;
   }
 });
 
-copyBtn.addEventListener('click', async () => {
+$('copy').addEventListener('click', async () => {
+  const btn = $('copy');
   try {
     await navigator.clipboard.writeText(rawText.replace(/\*\*/g, ''));
-    copyBtn.textContent = 'Tersalin';
+    btn.textContent = 'Tersalin';
   } catch (e) {
-    copyBtn.textContent = 'Gagal menyalin';
+    btn.textContent = 'Gagal menyalin';
   }
-  setTimeout(() => { copyBtn.textContent = 'Salin'; }, 1500);
+  setTimeout(() => { btn.textContent = 'Salin'; }, 1500);
 });
+
+renderStats();
 </script>
 </body>
 </html>
