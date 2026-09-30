@@ -165,6 +165,22 @@
   .feedback.ok { background: var(--mint-soft); color: #0D5C56; }
   .feedback.no { background: var(--coral-soft); color: #9A2F22; }
   .feedback small { display: block; font-weight: 400; margin-top: 2px; color: var(--ink); }
+  .unlock { background: var(--mint-soft); color: #0D5C56; font-weight: 700; border-radius: 10px; padding: 10px 12px; margin-bottom: 12px; }
+  .qmeta { margin: -6px 0 12px; font-size: 14px; color: var(--ink-soft); }
+  .qvisual { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 10px; margin-bottom: 12px; }
+  .qvisual svg { display: block; width: 100%; height: auto; border: 1px solid var(--line); border-radius: 10px; }
+  .options.textopts { grid-template-columns: 1fr; }
+  .opt.text { display: flex; align-items: center; gap: 12px; min-height: 56px; padding: 10px 12px; font-weight: 600; color: var(--navy); }
+  .opt.text .letter { position: static; flex: none; }
+  .mode { display: inline-block; font-size: 14px; font-weight: 700; padding: 4px 10px; border-radius: 999px; background: var(--mint-soft); color: #0D5C56; margin-bottom: 10px; }
+  .mode.hard { background: var(--coral-soft); color: #9A2F22; }
+  .timer { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+  .timer-track { flex: 1; height: 10px; background: var(--line); border-radius: 999px; overflow: hidden; }
+  .timer-bar { height: 100%; width: 100%; background: var(--mint); }
+  .timer.low .timer-bar { background: var(--coral); }
+  #timerText { min-width: 2ch; text-align: right; font-weight: 800; color: var(--navy); font-variant-numeric: tabular-nums; }
+  .timer.low #timerText { color: #9A2F22; }
+  .gameover.win { color: #1E9E94; }
   .gameover { font-size: 34px; font-weight: 800; color: var(--coral); letter-spacing: -0.02em; margin: 6px 0 12px; }
   .scoreline { font-size: 20px; font-weight: 700; color: var(--navy); margin: 2px 0; font-variant-numeric: tabular-nums; }
 
@@ -248,19 +264,19 @@
         <span class="menu-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-4.6-9.3-9.1C1.1 8.700 3 5 6.500 5c2 0 3.500 1.100 5.500 3.200C14 6.100 15.500 5 17.500 5 21 5 22.900 8.700 21.300 11.900 19 16.400 12 21 12 21z"/></svg>
         </span>
-        <span class="menu-text"><strong>Beat Battle</strong><span>Seberapa jauh kamu bisa bertahan?</span></span>
+        <span class="menu-text"><strong>Beat Battle</strong><span>Tes seberapa jago kamu baca EKG</span></span>
       </button>
       <button class="menu-btn" data-go="journey">
         <span class="menu-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V5m0 0h11l-2 4 2 4H4"/></svg>
         </span>
-        <span class="menu-text"><strong>EKG Journey</strong><span>35 materi dalam 5 level</span></span>
+        <span class="menu-text"><strong>Beat Academy</strong><span>Mulai dari kenalan sama EKG sampai ketemu pola-pola unik</span></span>
       </button>
       <button class="menu-btn" data-go="bedah">
         <span class="menu-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12h4l2-6 4 12 3-9 2 3h5"/></svg>
         </span>
-        <span class="menu-text"><strong>Bedah EKG</strong><span>Upload foto, dibedah langkah demi langkah</span></span>
+        <span class="menu-text"><strong>Beat Decode</strong><span>Upload EKG-mu dan kita lihat ada apa di sana.</span></span>
       </button>
     </div>
 
@@ -281,6 +297,7 @@
 
     <div class="stats" id="stats">
       <span class="hearts" id="hearts">❤️❤️❤️</span>
+      <span>Level: <span class="num"><span id="level">1</span>/50</span></span>
       <span>Score: <span class="num" id="score">0</span></span>
       <span>Best: <span class="num" id="best">0</span></span>
       <span>🔥 Streak: <span class="num" id="streak">0</span></span>
@@ -288,19 +305,28 @@
 
     <div class="card center" id="ready">
       <p class="big">Kamu punya 3 nyawa</p>
-      <p class="muted">Jawab sebanyak mungkin sebelum nyawa habis.</p>
+      <p class="muted">50 level menunggu. Jawab sebanyak mungkin sebelum nyawa habis.</p>
       <button class="btn block" id="startBtn">Mulai</button>
     </div>
 
     <div class="card" id="play" hidden>
+      <div class="unlock" id="unlock" hidden></div>
+      <span class="mode" id="modeTag" hidden></span>
+      <div class="timer" id="timer" hidden>
+        <div class="timer-track"><div class="timer-bar" id="timerBar"></div></div>
+        <span id="timerText">15</span>
+      </div>
       <p class="question" id="question"></p>
+      <p class="qmeta" id="qmeta" hidden></p>
+      <div class="qvisual" id="qvisual" hidden></div>
       <div class="options" id="options"></div>
       <div id="feedback" hidden></div>
       <button class="btn block" id="nextBtn" style="margin-top:12px" hidden>Lanjut</button>
     </div>
 
     <div class="card center" id="over" hidden>
-      <div class="gameover">GAME OVER</div>
+      <div class="gameover" id="overTitle">GAME OVER</div>
+      <p class="scoreline">Level: <span id="overLevel">1</span></p>
       <p class="scoreline">Score: <span id="overScore">0</span></p>
       <p class="scoreline">Best: <span id="overBest">0</span></p>
       <p class="scoreline" style="margin-bottom:16px">🔥 Streak terbaik: <span id="overStreak">0</span></p>
@@ -312,7 +338,7 @@
   <section id="journey" hidden>
     <div class="topbar">
       <button class="back" data-go="home" aria-label="Kembali"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.500" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button>
-      <h2>EKG Journey</h2>
+      <h2>Beat Academy</h2>
     </div>
     <div id="levels"></div>
   </section>
@@ -321,7 +347,7 @@
   <section id="bedah" hidden>
     <div class="topbar">
       <button class="back" data-go="home" aria-label="Kembali"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.500" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button>
-      <h2>Bedah EKG</h2>
+      <h2>Beat Decode</h2>
     </div>
 
     <div class="card">
@@ -333,13 +359,13 @@
       <textarea id="context" placeholder="Konteks klinis (opsional): usia, jenis kelamin, keluhan, TD, troponin. Jangan isi nama atau nomor RM."></textarea>
     </div>
 
-    <button class="btn block" id="analyze" disabled>Bedah EKG</button>
+    <button class="btn block" id="analyze" disabled>Decode EKG</button>
     <div id="status" role="status" hidden style="margin-top:12px"></div>
     <div id="error" role="alert" hidden style="margin-top:12px"></div>
 
     <div id="result" hidden>
       <div class="result-head">
-        <h3>Hasil bedah</h3>
+        <h3>Hasil decode</h3>
         <button class="btn ghost" id="copy" style="min-height:40px;padding:8px 14px;font-size:15px">Salin</button>
       </div>
       <div id="output"></div>
@@ -356,6 +382,7 @@ const VIEWS = ['home', 'battle', 'journey', 'bedah'];
 function show(name) {
   VIEWS.forEach(v => { $(v).hidden = (v !== name); });
   window.scrollTo(0, 0);
+  if (name !== 'battle') stopTimer();
   if (name === 'battle') battleReset();
 }
 document.querySelectorAll('[data-go]').forEach(b => {
@@ -380,68 +407,175 @@ function fmtBold(s) {
 
 /* =====================================================
    BEAT BATTLE
-   Strip EKG digambar oleh kode (ilustrasi skematik).
-   Tambah jenis irama baru di TYPES di bawah.
+   - 50 level = 50 soal, semua materi diacak dari awal,
+     tidak ada soal yang sama dalam satu permainan.
+   - Level 1-20 : biasa (3 nyawa)
+   - Level 21-40: + timer 15 detik per soal
+   - Level 41-50: + no second chance (salah sekali = mati)
+   - Tambah materi baru: tambah entri di TYPES (soal gambar)
+     atau di BANK (soal teks).
+   - Untuk tes: buka alamat-situs/#lv=21 atau #lv=41
    ===================================================== */
-const TYPES = {
-  af:      { label: 'AF (atrial fibrillation)', why: 'Irama tidak teratur sama sekali (irregularly irregular) dan tidak ada gelombang P yang jelas.' },
-  flutter: { label: 'atrial flutter', why: 'Garis dasar bergerigi seperti gigi gergaji, QRS muncul teratur.' },
-  sinus:   { label: 'sinus rhythm normal', why: 'Teratur, tiap QRS didahului gelombang P, rate 60-100.' },
-  brady:   { label: 'sinus bradycardia', why: 'Teratur, ada gelombang P, rate di bawah 60.' },
-  tachy:   { label: 'sinus tachycardia', why: 'Teratur, ada gelombang P, rate di atas 100.' },
-  pvc:     { label: 'PVC', why: 'Ada QRS lebar yang muncul lebih awal tanpa gelombang P di depannya.' }
-};
+const W = 300, H = 90, BASE = 50;
 
 function gauss(x, mu, s, a) { const d = (x - mu) / s; return a * Math.exp(-d * d / 2); }
+const g = gauss;
+const rnd = (a, b) => a + Math.random() * (b - a);
+const shuffle = (arr) => arr.map(v => [Math.random(), v]).sort((a, b) => a[0] - b[0]).map(p => p[1]);
 
-function makeStrip(type, idx) {
-  const W = 300, H = 80, base = 48;
-  const beats = [];
-  let hasP = true, hasT = true, pOff = 16, tOff = 18;
+/* Bentuk satu kompleks (d = jarak dari puncak R, satuan px; 1 px = 13 ms) */
+const QN = (d) => g(d, -3, 1, 3.5) + g(d, 0, 1.1, -32) + g(d, 3, 1.1, 8);
+const CX = {
+  normal:  (d) => QN(d) + g(d, 17, 4.5, -7),
+  tach:    (d) => QN(d) + g(d, 12, 3.5, -5),
+  af:      (d) => QN(d) + g(d, 15, 4, -4),
+  flutter: (d) => QN(d),
+  svt:     (d) => QN(d) + g(d, 10, 3, -3),
+  pvc:     (d) => g(d, 0, 4, -30) + g(d, 9, 5, 14) + g(d, 25, 6, 11),
+  wpw:     (d) => g(d, -6, 3, -8) + g(d, 0, 2.4, -30) + g(d, 5, 2.4, 8) + g(d, 22, 4.5, -5),
+  peric:   (d) => g(d, -8, 3, 2.5) + QN(d) + g(d, 7, 5, -6) + g(d, 17, 4.5, -8),
+  hyperk:  (d) => g(d, 0, 1.8, -28) + g(d, 4, 1.8, 7) + g(d, 15, 2.6, -25),
+  hypok:   (d) => QN(d) + g(d, 9, 5, 5) + g(d, 17, 4, -2) + g(d, 31, 3.5, -6),
+  rbbb:    (d) => g(d, -4, 1.2, -6) + g(d, 0, 1.6, 12) + g(d, 6, 2.2, -22) + g(d, 22, 4.5, 7),
+  lbbb:    (d) => g(d, 2, 3.4, 30) + g(d, 17, 5, -8),
+  nv1:     (d) => g(d, -1.5, 1, -6) + g(d, 2, 1.4, 22) + g(d, 16, 4.5, -4),
+  brug:    (d) => g(d, -2, 1.1, -6) + g(d, 4, 1.6, -16) + g(d, 10, 3.5, -10) + g(d, 22, 4, 8),
+  nv2:     (d) => g(d, -1.5, 1, -8) + g(d, 2, 1.3, 24) + g(d, 17, 4.5, -9),
+  stemi2:  (d) => g(d, -1.5, 1, -8) + g(d, 2, 1.3, 20) + g(d, 9, 6, -15) + g(d, 18, 5, -7),
+  stdep2:  (d) => g(d, -1.5, 1, -8) + g(d, 2, 1.3, 20) + g(d, 10, 6, 9) + g(d, 20, 4, 3),
+  wellens: (d) => g(d, -1.5, 1, -8) + g(d, 2, 1.3, 22) + g(d, 18, 5, 16),
+  dewint:  (d) => g(d, -1.5, 1, -9) + g(d, 2, 1.3, 20) + g(d, 6, 2.5, 8) + g(d, 16, 3.4, -20),
+  n3:      (d) => g(d, -2, 1, 2) + g(d, 0, 1.1, -20) + g(d, 3, 1.1, 3) + g(d, 17, 4.5, -4),
+  stemi3:  (d) => g(d, 0, 1.1, -20) + g(d, 3, 1.1, 3) + g(d, 9, 6, -13) + g(d, 18, 5, -7),
+  stdep3:  (d) => g(d, 0, 1.1, -12) + g(d, 3, 1.1, 3) + g(d, 10, 6, 9) + g(d, 20, 4, 2),
+  s1q3t3:  (d) => g(d, -3, 1.3, 10) + g(d, 0, 1.2, -22) + g(d, 3, 1.1, 3) + g(d, 17, 4.5, 8),
+  polpos:  (d) => g(d, -3, 1, 2) + g(d, 0, 1.1, -30) + g(d, 3, 1.1, 5) + g(d, 17, 4.5, -6),
+  polneg:  (d) => g(d, -1.5, 1, -5) + g(d, 2, 1.2, 28) + g(d, 15, 4.5, 4)
+};
+/* Bentuk gelombang P */
+const PW = {
+  normal: (d) => g(d, 0, 2.6, -5),
+  mitral: (d) => g(d, -3.5, 2.3, -4.5) + g(d, 3.5, 2.3, -4.5),
+  pulm:   (d) => g(d, 0, 2.1, -11),
+  pac:    (d) => g(d, 0, 2.5, 3),
+  flat:   (d) => g(d, 0, 3, -1.5)
+};
 
-  if (type === 'sinus' || type === 'brady' || type === 'tachy' || type === 'pvc') {
-    const rr = type === 'brady' ? 86 : type === 'tachy' ? 30 : 52;
-    if (type === 'tachy') { pOff = 10; tOff = 11; }
-    let t = 20 + Math.random() * rr * 0.35;
-    const list = [];
-    while (t < W + 10) { list.push(t); t += rr; }
-    if (type === 'pvc') {
-      const k = 1 + Math.floor(Math.random() * Math.max(1, list.length - 3));
-      list.forEach((tt, i) => beats.push(i === k ? { t: tt - rr * 0.35, pvc: true } : { t: tt }));
-    } else {
-      list.forEach(tt => beats.push({ t: tt }));
-    }
-  } else if (type === 'af') {
-    hasP = false;
-    let t = 10 + Math.random() * 10;
-    while (t < W + 10) { beats.push({ t }); t += 24 + Math.random() * 40; }
-  } else if (type === 'flutter') {
-    hasP = false; hasT = false;
-    let t = 14 + Math.random() * 20;
-    while (t < W + 10) { beats.push({ t }); t += 60; }
+/* Irama sinus teratur; o.pr = jarak P ke R (px), o.p = bentuk P */
+function sinusSpec(rr, cx, o) {
+  o = o || {};
+  const pr = o.pr || 12;
+  const beats = [], pw = [];
+  for (let t = 22 + Math.max(0, pr - 12) + Math.random() * rr * 0.3; t < W + 12; t += rr) {
+    beats.push({ t, cx });
+    pw.push({ t: t - pr, sh: o.p || 'normal' });
   }
+  return { beats, pw, base: 'flat' };
+}
 
-  const ph = [Math.random() * 6, Math.random() * 6, Math.random() * 6];
-  const sawShift = Math.random() * 15;
+function avBlockSpec(kind) {
+  const pp = 46, beats = [], pw = [];
+  const n = 2 + Math.floor(Math.random() * 2);
+  const cycle = [];
+  for (let i = 0; i < n; i++) cycle.push(kind === 'm1' ? 12 + i * 7 : 14);
+  cycle.push(null);
+  let t = 16 + Math.random() * 8, i = 0;
+  while (t < W + 12) {
+    pw.push({ t, sh: 'normal' });
+    const pr = cycle[i % cycle.length];
+    if (pr !== null) beats.push({ t: t + pr, cx: 'normal' });
+    i++; t += pp;
+  }
+  return { beats, pw, base: 'flat' };
+}
+
+const TYPES = {
+  /* ---------- Tier 1 ---------- */
+  sinus:   { lead: 'II', label: 'sinus rhythm normal', why: 'Teratur, tiap QRS didahului gelombang P, rate 60-100.', gen: () => sinusSpec(56, 'normal') },
+  brady:   { lead: 'II', label: 'sinus bradikardia', why: 'Teratur, ada P di depan tiap QRS, rate di bawah 60.', gen: () => sinusSpec(90, 'normal') },
+  tachy:   { lead: 'II', label: 'sinus takikardia', why: 'Teratur, ada P, rate di atas 100.', gen: () => sinusSpec(33, 'tach', { pr: 9 }) },
+  af:      { lead: 'II', label: 'AF (atrial fibrilasi)', why: 'Irama tidak teratur sama sekali (irregularly irregular) dan tidak ada gelombang P yang jelas.',
+    gen: () => { const beats = []; for (let t = rnd(12, 22); t < W + 12; t += rnd(24, 64)) beats.push({ t, cx: 'af' }); return { beats, pw: [], base: 'af' }; } },
+  flutter: { lead: 'II', label: 'atrial flutter', why: 'Garis dasar bergerigi seperti gigi gergaji, QRS muncul teratur.',
+    gen: () => { const beats = []; for (let t = rnd(14, 34); t < W + 12; t += 60) beats.push({ t, cx: 'flutter' }); return { beats, pw: [], base: 'flutter' }; } },
+  svt:     { lead: 'II', label: 'SVT', why: 'Takikardia regular, QRS sempit, gelombang P tidak terlihat, rate sekitar 150-250.',
+    gen: () => { const beats = []; for (let t = rnd(12, 30); t < W + 12; t += 25) beats.push({ t, cx: 'svt' }); return { beats, pw: [], base: 'flat' }; } },
+  pac:     { lead: 'II', label: 'PAC', why: 'Ada beat prematur dengan QRS sempit dan bentuk P yang berbeda; irama dasar lalu "reset" (jeda tidak kompensatorik).',
+    gen: () => {
+      const rr = 56, beats = [], pw = [], k = 2 + Math.floor(Math.random() * 2);
+      let t = rnd(22, 32), i = 0;
+      while (t < W + 12) {
+        const early = (i === k);
+        beats.push({ t, cx: 'normal' });
+        pw.push({ t: t - (early ? 9 : 12), sh: early ? 'pac' : 'normal' });
+        i++; t += (i === k) ? rr * 0.62 : rr;
+      }
+      return { beats, pw, base: 'flat' };
+    } },
+  pvc:     { lead: 'II', label: 'PVC', why: 'QRS lebar yang muncul lebih awal tanpa P di depannya, diikuti jeda kompensatorik.',
+    gen: () => {
+      const rr = 56, beats = [], pw = [], ts = [];
+      for (let t = rnd(22, 32); t < W + 12; t += rr) ts.push(t);
+      const k = 1 + Math.floor(Math.random() * Math.max(1, ts.length - 3));
+      ts.forEach((tt, i) => {
+        if (i === k) beats.push({ t: tt - rr * 0.36, cx: 'pvc' });
+        else { beats.push({ t: tt, cx: 'normal' }); pw.push({ t: tt - 12, sh: 'normal' }); }
+      });
+      return { beats, pw, base: 'flat' };
+    } },
+
+  /* ---------- Tier 2 ---------- */
+  avb1:    { lead: 'II', label: 'AV block derajat I', why: 'Semua P diikuti QRS, tapi PR interval memanjang (lebih dari 0,20 detik) dan konstan.', gen: () => sinusSpec(60, 'normal', { pr: 26 }) },
+  mobitz1: { lead: 'II', label: 'AV block derajat II Mobitz I (2a)', why: 'PR makin lama makin panjang sampai satu P tidak diikuti QRS (Wenckebach), lalu siklus berulang.', gen: () => avBlockSpec('m1') },
+  mobitz2: { lead: 'II', label: 'AV block derajat II Mobitz II (2b)', why: 'PR konstan, lalu tiba-tiba ada P yang tidak diikuti QRS.', gen: () => avBlockSpec('m2') },
+  chb:     { lead: 'II', label: 'AV block derajat III (complete)', why: 'P dan QRS berjalan sendiri-sendiri (disosiasi AV), rate ventrikel lambat.',
+    gen: () => {
+      const beats = [], pw = [], pp = rnd(38, 44), vv = rnd(78, 90);
+      for (let t = rnd(8, 24); t < W + 12; t += pp) pw.push({ t, sh: 'normal' });
+      for (let t = rnd(20, 50); t < W + 12; t += vv) beats.push({ t, cx: 'normal' });
+      return { beats, pw, base: 'flat' };
+    } },
+  pmitral: { lead: 'II', label: 'P mitral', why: 'P lebar (lebih dari 0,12 detik) dan bertakik (bifid) di lead II, tanda pembesaran atrium kiri.', gen: () => sinusSpec(56, 'normal', { p: 'mitral', pr: 15 }) },
+  ppulm:   { lead: 'II', label: 'P pulmonal', why: 'P tinggi dan runcing (lebih dari 2,5 mm) di lead II, tanda pembesaran atrium kanan.', gen: () => sinusSpec(56, 'normal', { p: 'pulm' }) },
+  rbbb:    { lead: 'V1', label: 'RBBB', why: "QRS lebar dengan pola rSR' (telinga kelinci) di V1.", gen: () => sinusSpec(56, 'rbbb') },
+  lbbb:    { lead: 'V1', label: 'LBBB', why: 'QRS lebar dengan gelombang QS/rS dalam di V1 (dan R bertakik di V6).', gen: () => sinusSpec(56, 'lbbb') },
+  nv1:     { lead: 'V1', label: 'gambaran normal', fill: true, why: 'QRS sempit dengan pola rS yang normal di V1.', gen: () => sinusSpec(56, 'nv1') },
+
+  /* ---------- Tier 3 ---------- */
+  stemi2:  { lead: 'V2', label: 'STEMI anterior (ST elevasi)', why: 'ST elevasi cembung (tombstone) di V1-V4 menunjukkan infark anterior.', gen: () => sinusSpec(56, 'stemi2') },
+  stdep2:  { lead: 'V2', label: 'ST depresi', why: 'ST depresi horizontal atau downsloping menunjukkan iskemia.', gen: () => sinusSpec(56, 'stdep2') },
+  nv2:     { lead: 'V2', label: 'gambaran normal', fill: true, why: 'Pola rS normal dengan ST isoelektrik dan T tegak.', gen: () => sinusSpec(56, 'nv2') },
+  stemi3:  { lead: 'III', label: 'STEMI inferior (ST elevasi)', why: 'ST elevasi di lead III (bersama II dan aVF) menunjukkan infark inferior.', gen: () => sinusSpec(56, 'stemi3') },
+  stdep3:  { lead: 'III', label: 'ST depresi resiprokal', why: 'ST depresi di lead III bisa menjadi perubahan resiprokal dari infark di dinding seberangnya (mis. high lateral).', gen: () => sinusSpec(56, 'stdep3') },
+  nv3:     { lead: 'III', label: 'gambaran normal', fill: true, why: 'Kompleks normal di lead III: ST isoelektrik, T tegak.', gen: () => sinusSpec(56, 'n3') },
+
+  /* ---------- Tier 4 ---------- */
+  wellens: { lead: 'V2', label: "Wellens' syndrome", why: 'T inversi dalam dan simetris di V2-V3 dengan ST isoelektrik; menandakan stenosis LAD proksimal yang kritis.', gen: () => sinusSpec(56, 'wellens') },
+  dewinter:{ lead: 'V2', label: 'De Winter pattern', why: 'ST depresi upsloping di titik J dengan T tinggi simetris di V2-V4; setara STEMI oklusi LAD.', gen: () => sinusSpec(56, 'dewint') },
+  s1q3t3:  { lead: 'III', label: 'S1Q3T3', why: 'Q dan T inversi di lead III (plus S di lead I); dipikirkan pada emboli paru, tapi tidak sensitif.', gen: () => sinusSpec(56, 's1q3t3') },
+  hypok:   { lead: 'II', label: 'hipokalemia', why: 'ST depresi, T mendatar, dan gelombang U yang menonjol.', gen: () => sinusSpec(56, 'hypok') },
+  hyperk:  { lead: 'II', label: 'hiperkalemia', why: 'T tinggi runcing simetris, P mengecil, QRS melebar.', gen: () => sinusSpec(56, 'hyperk', { p: 'flat' }) },
+  peric:   { lead: 'II', label: 'perikarditis', why: 'ST elevasi difus yang konkaf ke atas, disertai PR depresi.', gen: () => sinusSpec(56, 'peric') },
+  wpw:     { lead: 'II', label: 'WPW', why: 'PR pendek dan delta wave (upstroke QRS yang landai) dengan QRS melebar.', gen: () => sinusSpec(56, 'wpw', { pr: 10 }) },
+  brug:    { lead: 'V1', label: 'Brugada pattern (tipe 1)', why: 'ST elevasi coved (menurun cembung) dengan T inversi di V1-V2.', gen: () => sinusSpec(56, 'brug') }
+};
+
+let stripCounter = 0;
+function stripSvg(spec, label) {
+  const id = 'gr' + (++stripCounter);
+  const ph = [rnd(0, 6), rnd(0, 6), rnd(0, 6)];
+  const saw = rnd(0, 15);
+  const cx = (b) => CX[b.cx];
 
   function y(x) {
-    let v = base;
-    if (type === 'af') {
+    let v = BASE;
+    if (spec.base === 'af') {
       v += 1.6 * Math.sin(x * 0.9 + ph[0]) + 1.2 * Math.sin(x * 1.7 + ph[1]) + 0.8 * Math.sin(x * 2.6 + ph[2]);
+    } else if (spec.base === 'flutter') {
+      v += 6 * (((x + saw) / 15) % 1) - 3;
     }
-    if (type === 'flutter') {
-      const f = ((x + sawShift) / 15) % 1;
-      v += 6 * f - 3;
-    }
-    for (const b of beats) {
-      if (b.pvc) {
-        v += gauss(x, b.t, 4, -30) + gauss(x, b.t + 9, 5, 14) + gauss(x, b.t + 25, 6, 11);
-      } else {
-        v += gauss(x, b.t - 3, 1, 3.500) + gauss(x, b.t, 1.100, -32) + gauss(x, b.t + 3, 1.100, 8);
-        if (hasT) v += gauss(x, b.t + tOff, 4.500, -7);
-        if (hasP) v += gauss(x, b.t - pOff, 3, -5);
-      }
-    }
+    for (const b of spec.beats) v += cx(b)(x - b.t);
+    for (const p of spec.pw) v += PW[p.sh](x - p.t);
     return Math.max(4, Math.min(H - 4, v));
   }
 
@@ -449,29 +583,172 @@ function makeStrip(type, idx) {
   for (let x = 0; x <= W; x += 0.5) {
     d += (x === 0 ? 'M' : 'L') + x.toFixed(1) + ',' + y(x).toFixed(1) + ' ';
   }
-  const gid = 'grid' + idx;
-  return '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="Strip EKG">' +
-    '<defs><pattern id="' + gid + 's" width="5" height="5" patternUnits="userSpaceOnUse"><path d="M5 0H0V5" fill="none" stroke="#DCEDEB" stroke-width="0.4"/></pattern>' +
-    '<pattern id="' + gid + '" width="25" height="25" patternUnits="userSpaceOnUse"><rect width="25" height="25" fill="url(#' + gid + 's)"/><path d="M25 0H0V25" fill="none" stroke="#B9DCD8" stroke-width="0.6"/></pattern></defs>' +
-    '<rect width="' + W + '" height="' + H + '" fill="url(#' + gid + ')"/>' +
-    '<path d="' + d + '" fill="none" stroke="#14213D" stroke-width="1.300" stroke-linejoin="round" stroke-linecap="round"/></svg>';
+  const lbl = label
+    ? '<text x="6" y="13" font-size="10" font-weight="700" fill="#14213D" font-family="system-ui,sans-serif">' + escapeHtml(label) + '</text>'
+    : '';
+  return '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="Strip EKG' + (label ? ' lead ' + escapeHtml(label) : '') + '">' +
+    '<defs><pattern id="' + id + 's" width="3" height="3" patternUnits="userSpaceOnUse"><path d="M3 0H0V3" fill="none" stroke="#DCEDEB" stroke-width="0.35"/></pattern>' +
+    '<pattern id="' + id + '" width="15" height="15" patternUnits="userSpaceOnUse"><rect width="15" height="15" fill="url(#' + id + 's)"/><path d="M15 0H0V15" fill="none" stroke="#B9DCD8" stroke-width="0.6"/></pattern></defs>' +
+    '<rect width="' + W + '" height="' + H + '" fill="url(#' + id + ')"/>' + lbl +
+    '<path d="' + d + '" fill="none" stroke="#14213D" stroke-width="1.3" stroke-linejoin="round" stroke-linecap="round"/></svg>';
 }
 
+/* ---------- Bank soal teks (tier 3) ---------- */
+const BANK = [
+  { prompt: 'ST elevasi di lead II, III, dan aVF. Perubahan resiprokal (ST depresi) paling khas ada di lead…', ok: 'I dan aVL', bad: ['V1–V3', 'II dan aVF', 'V5–V6'],
+    why: 'Infark inferior: resiprokal di lead I dan aVL. ST depresi di aVL bahkan bisa muncul paling dini.' },
+  { prompt: 'ST elevasi di lead I dan aVL (high lateral). Perubahan resiprokal terlihat di…', ok: 'III dan aVF', bad: ['V1–V3', 'V5–V6', 'aVR saja'],
+    why: 'Dinding lateral tinggi berseberangan dengan dinding inferior, jadi bayangan cermin muncul di III dan aVF.' },
+  { prompt: 'ST elevasi di V1–V4. Perubahan resiprokal biasanya terlihat di…', ok: 'II, III, aVF', bad: ['I dan aVL', 'V5–V6', 'aVR saja'],
+    why: 'Infark anterior: resiprokal di lead inferior (II, III, aVF), walau sering samar.' },
+  { prompt: 'ST depresi di V1–V3 dengan R tinggi dan T tegak. Curiga…', ok: 'STEMI posterior', bad: ['STEMI anterior', 'Perikarditis', 'RBBB'],
+    why: 'Dinding posterior tidak terlihat langsung di 12 lead; ST depresi V1–V3 adalah bayangan cerminnya. Konfirmasi dengan V7–V9.' },
+  { prompt: 'ST elevasi di V1–V4 menunjukkan infark dinding…', ok: 'Anterior (LAD)', bad: ['Inferior (RCA)', 'Lateral (LCx)', 'Posterior'],
+    why: 'V1–V4 melihat dinding anterior dan septum yang dialiri LAD.' },
+  { prompt: 'ST elevasi di II, III, aVF menunjukkan infark dinding…', ok: 'Inferior (biasanya RCA)', bad: ['Anterior (LAD)', 'Lateral', 'Posterior'],
+    why: 'Lead II, III, aVF melihat dinding inferior, paling sering dialiri RCA.' },
+  { prompt: 'ST elevasi di I, aVL, V5–V6 menunjukkan infark dinding…', ok: 'Lateral (LCx atau diagonal)', bad: ['Anterior septal', 'Inferior', 'Posterior'],
+    why: 'Lead I, aVL, V5–V6 melihat dinding lateral.' },
+  { prompt: 'STEMI inferior disertai ST elevasi di V4R. Curiga…', ok: 'Infark ventrikel kanan', bad: ['Perikarditis', 'STEMI posterior', 'Infark anterior'],
+    why: 'V4R adalah lead sisi kanan; ST elevasi di sana menandakan RV infarction. Hati-hati dengan nitrat.' },
+
+  { prompt: 'Interval PR yang normal berkisar…', ok: '0,12–0,20 detik (3–5 kotak kecil)', bad: ['0,04–0,08 detik', '0,20–0,32 detik', '0,32–0,40 detik'],
+    why: 'PR diukur dari awal P sampai awal QRS. Lebih dari 0,20 detik berarti AV block derajat I; kurang dari 0,12 detik curiga WPW atau jalur pintas.' },
+  { prompt: 'QRS disebut lebar bila durasinya…', ok: '0,12 detik atau lebih (3 kotak kecil)', bad: ['0,04 detik', '0,08 detik', '0,20 detik'],
+    why: 'QRS lebar menandakan hantaran ventrikel yang lambat: bundle branch block, irama dari ventrikel, atau efek elektrolit/obat.' },
+  { prompt: 'Pada kecepatan kertas 25 mm/detik, satu kotak besar (5 kotak kecil) sama dengan…', ok: '0,20 detik', bad: ['0,04 detik', '0,10 detik', '0,50 detik'],
+    why: 'Satu kotak kecil 0,04 detik, satu kotak besar 0,20 detik. Lima kotak besar = 1 detik.' },
+  { prompt: 'Cara cepat menghitung rate pada irama teratur: 300 dibagi…', ok: 'jumlah kotak besar antara dua R', bad: ['jumlah kotak kecil antara dua R', 'jumlah QRS dalam satu kotak besar', 'lebar QRS dalam kotak kecil'],
+    why: 'Contoh: jarak R–R 4 kotak besar berarti rate sekitar 75 kali/menit. Kalau memakai kotak kecil, pembaginya 1500.' },
+  { prompt: 'Rate sinus yang normal berada di kisaran…', ok: '60–100 kali/menit', bad: ['40–60 kali/menit', '100–150 kali/menit', '150–250 kali/menit'],
+    why: 'Di bawah 60 disebut bradikardia, di atas 100 takikardia.' },
+  { prompt: 'Interval QT yang memanjang berisiko menimbulkan…', ok: 'Torsades de pointes', bad: ['Atrial flutter', 'AV block derajat I', 'Sinus arrest'],
+    why: 'QT panjang (bawaan, obat, atau gangguan elektrolit) meningkatkan risiko VT polimorfik torsades de pointes.' },
+  { prompt: 'Gelombang Q patologis biasanya menandakan…', ok: 'Nekrosis miokard (infark)', bad: ['Hipertrofi ventrikel kiri', 'Blok cabang berkas kanan', 'Efek hipokalemia'],
+    why: 'Q patologis (lebar 0,04 detik atau lebih, atau dalam lebih dari seperempat R) menandakan jaringan yang sudah nekrosis, baru maupun lama.' },
+  { prompt: 'ST depresi berbentuk sendok ("scooped") yang khas adalah efek…', ok: 'Digoksin', bad: ['Amiodaron', 'Adenosin', 'Lidokain'],
+    why: 'Digoksin memberi ST scooped (sering disamakan dengan kumis Dali). Ini efek obat, belum tentu toksisitas.' },
+  { prompt: 'Voltase QRS rendah disertai electrical alternans mengarah ke…', ok: 'Efusi perikard / tamponade', bad: ['Hipertrofi ventrikel kiri', 'Hiperkalemia', 'WPW'],
+    why: 'Jantung "berenang" dalam cairan perikard sehingga voltase turun dan axis-nya bergoyang tiap denyut.' },
+  { prompt: 'Hiperkalsemia pada EKG cenderung menyebabkan…', ok: 'Interval QT memendek', bad: ['Interval QT memanjang', 'T runcing simetris', 'Gelombang U menonjol'],
+    why: 'Hiperkalsemia memendekkan segmen ST dan QT; hipokalsemia sebaliknya memanjangkan QT.' },
+  { prompt: 'Kriteria Sokolow-Lyon untuk LVH: S di V1 + R di V5 atau V6 lebih dari…', ok: '35 mm', bad: ['15 mm', '25 mm', '50 mm'],
+    why: 'Kriteria ini spesifik tetapi kurang sensitif, dan sering disertai strain pattern (ST-T berubah).' },
+  { prompt: 'Ambang ST elevasi di V2–V3 untuk STEMI pada pria usia 40 tahun ke atas adalah…', ok: '2 mm atau lebih', bad: ['0,5 mm', '1 mm', '5 mm'],
+    why: 'Di V2–V3 ambangnya lebih tinggi karena ST elevasi ringan bisa normal: 2 mm pria 40 tahun ke atas, 2,5 mm pria di bawah 40, 1,5 mm wanita. Lead lain 1 mm.' },
+  { prompt: 'Rentang axis QRS yang normal adalah…', ok: '−30° sampai +90°', bad: ['+90° sampai +180°', '−90° sampai −30°', '0° sampai +30° saja'],
+    why: 'Lebih negatif dari −30° disebut LAD, lebih dari +90° disebut RAD.' },
+  { prompt: 'Manakah yang lebih sering memerlukan pacemaker karena bisa mendadak menjadi blok total?', ok: 'Mobitz II', bad: ['Mobitz I (Wenckebach)', 'AV block derajat I', 'Sinus bradikardia ringan'],
+    why: 'Mobitz II umumnya blok di bawah nodus AV dan bisa progresif tanpa peringatan; Wenckebach biasanya lebih jinak.' },
+  { prompt: 'Pada emboli paru, temuan EKG yang paling sering adalah…', ok: 'Sinus takikardia', bad: ['S1Q3T3', 'RBBB baru', 'Right axis deviation'],
+    why: 'Sinus takikardia paling sering. S1Q3T3 klasik tetapi jarang ditemukan.' }
+];
+
+const AXIS = {
+  normal:  { label: 'Normal axis', i: 'polpos', a: 'polpos', prompt: 'Lihat lead I dan aVF. Bagaimana axis jantungnya?', why: 'QRS positif di lead I dan aVF: axis normal.' },
+  lad:     { label: 'Left axis deviation (LAD)', i: 'polpos', a: 'polneg', prompt: 'Cermati polaritas QRS di lead I dan aVF. Axis jantungnya…?', why: 'Lead I positif, aVF negatif: axis bergeser ke kiri (cek lead II untuk memastikan).' },
+  rad:     { label: 'Right axis deviation (RAD)', i: 'polneg', a: 'polpos', prompt: 'Lead I dan aVF ditampilkan. Axis apa yang sesuai?', why: 'Lead I negatif, aVF positif: axis bergeser ke kanan.' },
+  extreme: { label: 'Extreme axis (northwest)', i: 'polneg', a: 'polneg', prompt: 'Bagaimana axis jantung dari lead I dan aVF berikut?', why: 'Lead I dan aVF sama-sama negatif: extreme axis.' }
+};
+
+const letterOf = (i) => 'ABCD'[i];
+
+const TOTAL = 50;          // jumlah level = jumlah soal
+const TIMER_FROM = 21;     // timer aktif mulai level ini
+const HARD_FROM = 41;      // no second chance mulai level ini
+const TIME_LIMIT = 15;     // detik
+const zoneOf = (lv) => (lv >= HARD_FROM ? 3 : lv >= TIMER_FROM ? 2 : 1);
+
+function stripQuestion(target) {
+  const lead = TYPES[target].lead;
+  const dist = shuffle(Object.keys(TYPES).filter(k => k !== target && TYPES[k].lead === lead)).slice(0, 3);
+  const opts = shuffle([target, ...dist]);
+  return {
+    prompt: 'Manakah yang menunjukkan ' + TYPES[target].label + '?',
+    meta: 'Semua strip: lead ' + lead + '. 1 strip = 4 detik.',
+    why: TYPES[target].why,
+    options: opts.map((k, i) => ({ html: '<span class="letter">' + letterOf(i) + '</span>' + stripSvg(TYPES[k].gen()), correct: k === target }))
+  };
+}
+
+function axisQuestion(key) {
+  const keys = Object.keys(AXIS);
+  const a = AXIS[key];
+  return {
+    prompt: a.prompt,
+    meta: '',
+    visual: stripSvg(sinusSpec(56, a.i), 'I') + stripSvg(sinusSpec(56, a.a), 'aVF'),
+    why: a.why,
+    options: shuffle(keys).map((k, i) => ({ html: '<span class="letter">' + letterOf(i) + '</span><span>' + AXIS[k].label + '</span>', correct: k === key, text: true }))
+  };
+}
+
+function bankQuestion(idx) {
+  const b = BANK[idx];
+  const opts = shuffle([{ t: b.ok, c: true }, ...b.bad.map(t => ({ t, c: false }))]);
+  return {
+    prompt: b.prompt,
+    meta: '',
+    why: b.why,
+    options: opts.map((o, i) => ({ html: '<span class="letter">' + letterOf(i) + '</span><span>' + escapeHtml(o.t) + '</span>', correct: o.c, text: true }))
+  };
+}
+
+/* Deck 50 soal: semua soal gambar + axis wajib masuk, sisanya diisi soal teks.
+   Setiap soal maksimal satu kali, urutannya diacak. */
+function buildDeck() {
+  const must = [];
+  Object.keys(TYPES).filter(k => !TYPES[k].fill).forEach(k => must.push({ kind: 'strip', key: k }));
+  Object.keys(AXIS).forEach(k => must.push({ kind: 'axis', key: k }));
+  const bank = shuffle(BANK.map((b, i) => ({ kind: 'bank', idx: i })));
+  return shuffle(must.concat(bank).slice(0, Math.max(TOTAL, must.length))).slice(0, TOTAL);
+}
+function questionFor(it) {
+  if (it.kind === 'strip') return stripQuestion(it.key);
+  if (it.kind === 'axis') return axisQuestion(it.key);
+  return bankQuestion(it.idx);
+}
+
+/* ---------- Status game ---------- */
 const LS_KEY = 'ekghelper_best';
-const B = { lives: 3, score: 0, streak: 0, maxStreak: 0, best: 0, answered: false, q: null };
+const B = { lives: 3, level: 1, score: 0, streak: 0, maxStreak: 0, best: 0, answered: false, q: null, deck: [], broken: false, won: false };
 try { B.best = parseInt(localStorage.getItem(LS_KEY) || '0', 10) || 0; } catch (e) {}
 
 const nf = (n) => n.toLocaleString('id-ID');
 
 function renderStats() {
-  $('hearts').textContent = '❤️'.repeat(B.lives) + '🖤'.repeat(3 - B.lives);
+  $('hearts').textContent = B.broken ? '💔💔💔' : '❤️'.repeat(B.lives) + '🖤'.repeat(3 - B.lives);
+  $('level').textContent = Math.min(B.level, TOTAL);
   $('score').textContent = nf(B.score);
   $('best').textContent = nf(B.best);
   $('streak').textContent = B.streak;
 }
 
+/* ---------- Timer ---------- */
+let timerId = null, deadline = 0;
+function stopTimer() { if (timerId) { clearInterval(timerId); timerId = null; } }
+function tickTimer() {
+  const left = Math.max(0, deadline - Date.now());
+  $('timerBar').style.width = (left / (TIME_LIMIT * 1000) * 100) + '%';
+  $('timerText').textContent = Math.ceil(left / 1000);
+  $('timer').classList.toggle('low', left <= 5000);
+  if (left <= 0) { stopTimer(); if (!B.answered) answer(-1, null); }
+}
+function startTimer() {
+  stopTimer();
+  if (B.level < TIMER_FROM) { $('timer').hidden = true; return; }
+  $('timer').hidden = false;
+  deadline = Date.now() + TIME_LIMIT * 1000;
+  tickTimer();
+  timerId = setInterval(tickTimer, 100);
+}
+
 function battleReset() {
-  B.lives = 3; B.score = 0; B.streak = 0; B.maxStreak = 0; B.answered = false;
+  stopTimer();
+  const m = (location.hash || '').match(/lv=(\d+)/);
+  B.lives = 3; B.score = 0; B.streak = 0; B.maxStreak = 0; B.answered = false; B.broken = false; B.won = false;
+  B.level = m ? Math.min(TOTAL, Math.max(1, parseInt(m[1], 10))) : 1;
+  B.deck = buildDeck();
   $('ready').hidden = false;
   $('play').hidden = true;
   $('over').hidden = true;
@@ -479,52 +756,79 @@ function battleReset() {
 }
 
 function nextQuestion() {
-  const keys = Object.keys(TYPES);
-  const target = keys[Math.floor(Math.random() * keys.length)];
-  const others = keys.filter(k => k !== target).sort(() => Math.random() - 0.5).slice(0, 3);
-  const opts = [target, ...others].sort(() => Math.random() - 0.5);
-  B.q = { target, opts };
+  const lv = B.level;
+  const q = questionFor(B.deck[lv - 1]);
+  B.q = q;
   B.answered = false;
 
-  $('question').textContent = 'Manakah yang menunjukkan ' + TYPES[target].label + '?';
+  const note = $('unlock');
+  if (lv === TIMER_FROM) {
+    note.textContent = 'Level ' + lv + ': timer aktif! Kamu hanya punya ' + TIME_LIMIT + ' detik per soal.';
+    note.hidden = false;
+  } else if (lv === HARD_FROM) {
+    note.textContent = 'Level ' + lv + ': no second chance! Satu jawaban salah atau waktu habis, langsung game over.';
+    note.hidden = false;
+  } else {
+    note.hidden = true;
+  }
+
+  const tag = $('modeTag');
+  if (lv >= HARD_FROM) { tag.textContent = '💔 No second chance · ⏱ ' + TIME_LIMIT + ' detik'; tag.className = 'mode hard'; tag.hidden = false; }
+  else if (lv >= TIMER_FROM) { tag.textContent = '⏱ ' + TIME_LIMIT + ' detik per soal'; tag.className = 'mode'; tag.hidden = false; }
+  else { tag.hidden = true; }
+
+  $('question').textContent = q.prompt;
+  $('qmeta').textContent = q.meta || '';
+  $('qmeta').hidden = !q.meta;
+  $('qvisual').innerHTML = q.visual || '';
+  $('qvisual').hidden = !q.visual;
+
   const box = $('options');
   box.innerHTML = '';
-  opts.forEach((type, i) => {
+  box.className = 'options' + (q.options[0].text ? ' textopts' : '');
+  q.options.forEach((o, i) => {
     const btn = document.createElement('button');
-    btn.className = 'opt';
-    btn.innerHTML = '<span class="letter">' + 'ABCD'[i] + '</span>' + makeStrip(type, i);
-    btn.setAttribute('aria-label', 'Pilihan ' + 'ABCD'[i]);
+    btn.className = 'opt' + (o.text ? ' text' : '');
+    btn.innerHTML = o.html;
+    btn.setAttribute('aria-label', 'Pilihan ' + letterOf(i));
     btn.addEventListener('click', () => answer(i, btn));
     box.appendChild(btn);
   });
   $('feedback').hidden = true;
   $('nextBtn').hidden = true;
+  startTimer();
 }
 
 function answer(i, btn) {
   if (B.answered) return;
   B.answered = true;
-  const { target, opts } = B.q;
-  const correct = opts[i] === target;
+  stopTimer();
+  const q = B.q;
+  const lv = B.level;
+  const timedOut = i < 0;
+  const correct = !timedOut && q.options[i].correct;
   const all = document.querySelectorAll('#options .opt');
   all.forEach(b => { b.disabled = true; });
-  all[opts.indexOf(target)].classList.add('correct');
+  all[q.options.findIndex(o => o.correct)].classList.add('correct');
 
   const fb = $('feedback');
   fb.hidden = false;
 
   if (correct) {
-    B.score += 100 + Math.min(B.streak, 10) * 10;
+    B.score += [0, 100, 150, 200][zoneOf(lv)] + Math.min(B.streak, 10) * 10;
     B.streak += 1;
     B.maxStreak = Math.max(B.maxStreak, B.streak);
+    if (lv >= TOTAL) B.won = true; else B.level += 1;
     fb.className = 'feedback ok';
-    fb.innerHTML = '✅ Nice!<small>' + escapeHtml(TYPES[target].why) + '</small>';
+    fb.innerHTML = '✅ Nice!<small>' + escapeHtml(q.why) + '</small>';
   } else {
-    btn.classList.add('wrong');
-    B.lives -= 1;
+    if (btn) btn.classList.add('wrong');
+    if (lv >= HARD_FROM) { B.lives = 0; B.broken = true; } else { B.lives -= 1; }
     B.streak = 0;
+    let head = timedOut ? '⏰ Waktu habis!' : 'Belum tepat.';
+    if (B.broken) head += ' 💔 No second chance.';
     fb.className = 'feedback no';
-    fb.innerHTML = 'Belum tepat.<small>' + escapeHtml(TYPES[target].why) + '</small>';
+    fb.innerHTML = head + '<small>' + escapeHtml(q.why) + '</small>';
   }
   if (B.score > B.best) {
     B.best = B.score;
@@ -532,37 +836,34 @@ function answer(i, btn) {
   }
   renderStats();
 
-  if (B.lives <= 0) {
-    $('nextBtn').textContent = 'Lihat hasil';
-  } else {
-    $('nextBtn').textContent = 'Lanjut';
-  }
+  $('nextBtn').textContent = (B.won || B.lives <= 0) ? 'Lihat hasil' : 'Lanjut';
   $('nextBtn').hidden = false;
   $('nextBtn').focus();
 }
 
-$('startBtn').addEventListener('click', () => {
+function showOver() {
+  $('play').hidden = true;
+  $('over').hidden = false;
+  const title = $('overTitle');
+  title.textContent = B.won ? '🏆 TAMAT!' : 'GAME OVER';
+  title.className = 'gameover' + (B.won ? ' win' : '');
+  $('overLevel').textContent = (B.won ? TOTAL : B.level) + '/' + TOTAL;
+  $('overScore').textContent = nf(B.score);
+  $('overBest').textContent = nf(B.best);
+  $('overStreak').textContent = B.maxStreak;
+}
+
+function startGame() {
   $('ready').hidden = true;
+  $('over').hidden = true;
   $('play').hidden = false;
   nextQuestion();
-});
+}
+$('startBtn').addEventListener('click', startGame);
 $('nextBtn').addEventListener('click', () => {
-  if (B.lives <= 0) {
-    $('play').hidden = true;
-    $('over').hidden = false;
-    $('overScore').textContent = nf(B.score);
-    $('overBest').textContent = nf(B.best);
-    $('overStreak').textContent = B.maxStreak;
-  } else {
-    nextQuestion();
-  }
+  if (B.won || B.lives <= 0) showOver(); else nextQuestion();
 });
-$('againBtn').addEventListener('click', () => {
-  battleReset();
-  $('ready').hidden = true;
-  $('play').hidden = false;
-  nextQuestion();
-});
+$('againBtn').addEventListener('click', () => { battleReset(); startGame(); });
 
 /* =====================================================
    EKG JOURNEY
@@ -733,7 +1034,7 @@ analyzeBtn.addEventListener('click', async () => {
   showError('');
   resultEl.hidden = true;
   analyzeBtn.disabled = true;
-  statusEl.textContent = 'Membedah EKG... biasanya 10-30 detik.';
+  statusEl.textContent = 'Decoding EKG... biasanya 10-30 detik.';
   statusEl.hidden = false;
 
   try {
